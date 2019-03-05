@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package pb;
+
+message IP {
+    // @inject_tag: valid:"ip" yaml:"ip" json:"overrided"
+    // @required: "true"
+    // @description: "2212312"
+    string Address = 1;
+}
+
+message URL {
+    // @required: "true"
+    // @description: "2212312"
+    string scheme = 1;
+    string url = 2;
+    // @inject_tag: valid:"nonzero"
+    int32 port = 3;
+}

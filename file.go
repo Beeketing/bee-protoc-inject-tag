@@ -13,8 +13,8 @@ import (
 
 var (
 	//rComment = regexp.MustCompile(`^//\s*@inject_tag:\s*(.*)$`)
-	rInject  = regexp.MustCompile("`.+`$")
-	rTags    = regexp.MustCompile(`[\w_]+:"[^"]+"`)
+	rInject     = regexp.MustCompile("`.+`$")
+	rTags       = regexp.MustCompile(`[\w_]+:"[^"]+"`)
 	rBeeComment = regexp.MustCompile(`^//\s*@([a-z0-9_]+)[:]*\s*(.*)$`)
 )
 
@@ -87,6 +87,9 @@ func parseFile(inputPath string, xxxSkip []string) (areas []textArea, err error)
 			if field.Doc == nil {
 				continue
 			}
+			var cache string
+			var areaOld textArea
+			var exist bool
 			for _, comment := range field.Doc.List {
 				//log.Println("comment:", comment)
 				tag := tagFromComment(comment.Text)
@@ -94,6 +97,7 @@ func parseFile(inputPath string, xxxSkip []string) (areas []textArea, err error)
 				if tag == "" {
 					continue
 				}
+				exist = true
 				currentTag := field.Tag.Value
 				area := textArea{
 					Start:      int(field.Pos()),
@@ -101,7 +105,20 @@ func parseFile(inputPath string, xxxSkip []string) (areas []textArea, err error)
 					CurrentTag: currentTag[1 : len(currentTag)-1],
 					InjectTag:  tag,
 				}
-				areas = append(areas, area)
+				cacheCurrent := fmt.Sprintf("%d_%d", area.Start, area.End)
+				if cacheCurrent == cache {
+					areaOld.InjectTag = areaOld.InjectTag + " " + tag
+				} else if cache == "" {
+					areaOld = area
+					cache = cacheCurrent
+				} else {
+					areas = append(areas, areaOld)
+					areaOld = area
+					cache = cacheCurrent
+				}
+			}
+			if exist {
+				areas = append(areas, areaOld)
 			}
 		}
 	}
