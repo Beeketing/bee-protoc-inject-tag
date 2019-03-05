@@ -8,7 +8,7 @@ This project is custom of https://github.com/favadi/protoc-go-inject-tag
 - In auto gen swagger doc use tag for description, example, valid ...
 
 ## Install
-*  `go get github.com/favadi/protoc-go-inject-tag`
+*  `go get Beeketing/bee-protoc-inject-tag`
 
 ## Usage
 
