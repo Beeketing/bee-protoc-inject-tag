@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var tagSupports = map[string]bool{"required": true, "description": true, "example": true, "valid": true}
+var tagSupports = map[string]bool{"required": true, "description": true, "example": true, "valid": true, "title": true}
 
 func tagFromComment(comment string) (tag string) {
 	match := rBeeComment.FindStringSubmatch(comment)
@@ -18,7 +18,7 @@ func tagFromComment(comment string) (tag string) {
 			return match[2]
 		}
 		if _, ok := tagSupports[match[1]]; ok {
-			return match[1] + ":" + match[2]
+			return match[1] + ":\"" + strings.Trim(match[2], ",: \"") + "\""
 		} else {
 			log.Println("tag " + match[1] + " do not support")
 		}
